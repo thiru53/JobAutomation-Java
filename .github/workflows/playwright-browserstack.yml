@@ -1,0 +1,83 @@
+name: Playwright Java Tests
+
+on:
+  push:
+    branches: [BrowserStack]
+  pull_request:
+    branches: [BrowserStack]
+  schedule: # Trigger daily at 7 AM CST (13:00 UTC)
+    - cron: '0 13 * * *'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  test:
+    runs-on: ubuntu-latest # Use ubuntu-latest for CI; Playwright handles browser environments
+
+    env: # Move BrowserStack vars here so they're available for if: checks
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      RUN_ON_BROWSERSTACK: ${{ secrets.RUN_ON_BROWSERSTACK }}
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up JDK (Playwright Java requires Java 8+)
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # Match your local Java version
+          distribution: 'temurin'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
+
+      - name: Install Playwright Dependencies
+        run: |
+          npm install -g playwright@1.48.0
+          sudo npx playwright install-deps
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: 0
+
+      # Cache Maven dependencies to speed up builds
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      # Install dependencies (including Playwright)
+      - name: Install Maven Dependencies
+        run: mvn install -DskipTests
+
+      # Install Playwright browsers (Chromium, Firefox, WebKit)
+      - name: Install Playwright browsers
+        run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+
+      # Run Playwright tests (local execution on GitHub Actions runner)
+      - name: Run Playwright tests
+        run: mvn test
+        env:
+          # Optional: Set environment variables for Playwright
+          PLAYWRIGHT_BROWSERS_PATH: 0 # Use default browser paths
+          # Add browser-specific configurations if needed
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH: "" # Use default Chromium
+
+      # Run Playwright tests on BrowserStack (optional, for cloud execution)
+      - name: Run Playwright tests on BrowserStack
+        if: env.BROWSERSTACK_USERNAME != '' # Only run if credentials are provided
+        run: mvn test -Pbrowserstack
+
+      # Upload test results (optional, for debugging)
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            test-results/
+            playwright-report/

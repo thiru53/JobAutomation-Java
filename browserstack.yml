@@ -1,0 +1,18 @@
+#userName: ${{ secrets.BROWSERSTACK_USERNAME }}
+#accessKey: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+
+projectName: BrowserStack Sample
+buildName: playwright-java-local-${{ github.run_id }}
+framework: playwright
+browserstackLocal: true
+
+platforms:
+  - os: OS X
+    osVersion: Ventura
+    browser: Chrome
+    browserVersion: latest
+
+CUSTOM_TAG_1: "You can set a custom Build Tag here"
+# Use CUSTOM_TAG_<N> and set more build tags as you need.
+debug: true
+consoleLogs: info
