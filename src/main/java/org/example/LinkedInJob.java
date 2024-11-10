@@ -4,6 +4,7 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class LinkedInJob {
@@ -22,6 +23,11 @@ public class LinkedInJob {
             Thread.sleep(1000);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Jobs").setExact(true)).click();
             //page.getByLabel("Show all Job picks for you").click();
+
+            List<Locator> buttons = page.locator("button:has-text('You are on the messaging overlay')").all();
+            if(Objects.nonNull(buttons) && !buttons.isEmpty()) {
+                buttons.get(1).click();
+            }
 
             Thread.sleep(1000);
             page.getByRole(AriaRole.COMBOBOX, new Page.GetByRoleOptions().setName("Search by title, skill, or")).fill("spring-boot");
