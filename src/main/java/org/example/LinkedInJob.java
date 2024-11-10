@@ -1,11 +1,10 @@
 package org.example;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.*;
+import com.microsoft.playwright.options.AriaRole;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-
-import java.util.*;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class LinkedInJob {
     public static void main(String[] args) throws InterruptedException {
@@ -22,7 +21,7 @@ public class LinkedInJob {
 
             Thread.sleep(1000);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Jobs").setExact(true)).click();
-            page.getByLabel("Show all Job picks for you").click();
+            //page.getByLabel("Show all Job picks for you").click();
 
             Thread.sleep(1000);
             page.getByRole(AriaRole.COMBOBOX, new Page.GetByRoleOptions().setName("Search by title, skill, or")).fill("spring-boot");
@@ -32,25 +31,30 @@ public class LinkedInJob {
             Thread.sleep(1000);
             page.getByLabel("Date posted filter. Clicking").click();
             page.locator("label").filter(new Locator.FilterOptions().setHasText("Past week Filter by Past week")).click();
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Apply current filter to show")).click();
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(Pattern.compile("Apply current filter to show", Pattern.CASE_INSENSITIVE))).click();
 
+            Thread.sleep(1000);
             page.getByLabel("Experience level filter.").click();
             page.locator("label").filter(new Locator.FilterOptions().setHasText("Associate")).click();
             page.locator("label").filter(new Locator.FilterOptions().setHasText("Mid-Senior level")).click();
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Apply current filter to show")).click();
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(Pattern.compile("Apply current filter to show", Pattern.CASE_INSENSITIVE))).click();
 
+            Thread.sleep(1000);
             page.getByLabel("Salary filter. Clicking this").click();
             page.locator("label").filter(new Locator.FilterOptions().setHasText("$160,000+")).click();
+            Thread.sleep(1000);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(Pattern.compile("Apply current filter to show", Pattern.CASE_INSENSITIVE))).click();
 
             page.getByLabel("Easy Apply filter.").click();
 
             List<Locator> pages = page.locator("ul.artdeco-pagination__pages li").all();
             System.out.println("No of Pages :" + pages.size());
             for (int i = 0; i < pages.size(); i++) {
-                System.out.println("Clicking Page : " + i);
-                pages.get(i).click();
+                System.out.println("Selecting Page : " + i);
+                if (i > 0) {
+                    pages.get(i).click();
+                }
             }
-
         }
     }
 }
