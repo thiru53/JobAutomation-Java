@@ -1,0 +1,80 @@
+name: Daily Playwright Java Tests
+
+on:
+  schedule:
+    - cron: '0 7 * * 1-5' # Runs daily at 7 AM UTC, Monday–Friday
+  push:
+    branches:
+      - SeleniumGrid
+  pull_request:
+    branches:
+      - SeleniumGrid
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      # Selenium Grid (Standalone Chrome)
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: --shm-size=2g
+
+    steps:
+      # Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Cache Maven dependencies
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      # Wait for Selenium Grid to be ready
+      - name: Wait for Selenium Grid
+        run: |
+          timeout 30s bash -c "until curl -s http://localhost:4444/wd/hub/status | grep -q 'ready.*true'; do sleep 1; echo 'Waiting for Selenium Grid...'; done"
+          
+      # Verify Selenium Grid is running
+      - name: Verify Selenium Grid
+        run: |
+          echo "Checking Selenium Grid status..."
+          timeout 60s bash -c "until curl -s http://localhost:4444/wd/hub/status | grep -q '\"ready\": true'; do sleep 1; echo 'Waiting for Selenium Grid...'; done"
+          if [ $? -eq 0 ]; then
+            echo "Selenium Grid is ready!"
+            curl http://localhost:4444/wd/hub/status
+          else
+            echo "Error: Selenium Grid failed to start within 60 seconds"
+            exit 1
+          fi
+
+      # Install Playwright dependencies (optional if using Selenium Grid exclusively)
+      - name: Install Playwright browsers
+        run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps"
+
+      # Run Maven tests
+      - name: Run Playwright tests
+        env:
+          SELENIUM_GRID_URL: http://localhost:4444/wd/hub
+          SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
+        run: mvn clean test
+
+      # Upload test results (optional, for debugging)
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/

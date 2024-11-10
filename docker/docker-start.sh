@@ -1,0 +1,1 @@
+docker compose -f docker-compose-v3-beta-channel.yml up -d
