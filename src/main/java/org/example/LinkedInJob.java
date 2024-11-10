@@ -60,7 +60,19 @@ public class LinkedInJob {
                 if (i > 0) {
                     pages.get(i).click();
                 }
+
+                applyToJobItem(page);
+
+
             }
+        }
+    }
+
+    private static void applyToJobItem(Page page) {
+        List<Locator> jobItems = page.locator("xpath=//ul[@class='scaffold-layout__list-container']//li[contains(@class, 'jobs-search-results__list-item')]").all();
+        System.out.printf("Found %d jobItems%n", jobItems.size());
+        for(Locator jobItem :jobItems) {
+            jobItem.click();
         }
     }
 }
