@@ -53,6 +53,7 @@ public class LinkedInJob {
 
             page.getByLabel("Easy Apply filter.").click();
 
+            Thread.sleep(5000);
             List<Locator> pages = page.locator("ul.artdeco-pagination__pages li").all();
             System.out.println("No of Pages :" + pages.size());
             for (int i = 0; i < pages.size(); i++) {
@@ -60,10 +61,7 @@ public class LinkedInJob {
                 if (i > 0) {
                     pages.get(i).click();
                 }
-
                 applyToJobItem(page);
-
-
             }
         }
     }
@@ -72,10 +70,17 @@ public class LinkedInJob {
         List<Locator> jobItems = page.locator("xpath=//ul[@class='scaffold-layout__list-container']//li[contains(@class, 'jobs-search-results__list-item')]").all();
         System.out.printf("Found %d jobItems%n", jobItems.size());
         for(Locator jobItem :jobItems) {
-            jobItem.click();
-            Locator jobDetailsMainContent = page.locator("xpath=//div[contains(@class, 'jobs-details__main-content')]");
-            String jobTitle = jobDetailsMainContent.locator("xpath=//div[contains(@class, 'job-details-jobs-unified-top-card__job-title')]//h1").textContent();
-            System.out.println("JobTitle : "+jobTitle);
+            try {
+                jobItem.click();
+                Locator jobDetailsMainContent = page.locator("xpath=//div[contains(@class, 'jobs-details__main-content')]");
+                String jobTitle = jobDetailsMainContent.locator("xpath=//div[contains(@class, 'job-details-jobs-unified-top-card__job-title')]//h1").textContent();
+                System.out.println("JobTitle : " + jobTitle);
+                Thread.sleep(1000);
+                jobDetailsMainContent.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Easy Apply")).click();
+            } catch (InterruptedException ie) {
+                System.err.println("InterruptedException :: "+ie.getMessage());
+            }
+
         }
     }
 }
