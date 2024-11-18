@@ -128,6 +128,7 @@ public class LinkedInJob {
         for (int i = 0; i < questions.count(); i++) {
             fillQuestionAnswers(page, questions, i);
         }
+        /**
         page.getByLabel("What is your expected hourly").click();
         page.getByLabel("What is your expected hourly").fill("65");
         page.getByLabel("Please confirm your work").click();
@@ -148,6 +149,7 @@ public class LinkedInJob {
         page.getByLabel("Review your application").click();
         page.getByLabel("Submit application").click();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Dismiss")).click();
+         **/
     }
 
     private static void fillQuestionAnswers(Page page, Locator questions, int i){
@@ -164,11 +166,11 @@ public class LinkedInJob {
 
         if (answer.equalsIgnoreCase("Yes") || answer.equalsIgnoreCase("No")) {
             // Handle Yes/No radio button questions
-            Locator radioButtons = questionElement.locator("input[type=radio]");
-            for (int j = 0; j < radioButtons.count(); j++) {
-                String optionText = radioButtons.nth(j).locator("..").innerText().trim(); // Adjust based on structure
+            List<Locator> radioButtons = questionElement.locator("input[type=radio]").all();
+            for (Locator radioButton : radioButtons) {
+                String optionText = radioButton.locator("..").innerText().trim(); // Adjust based on structure
                 if (optionText.equalsIgnoreCase(answer)) {
-                    radioButtons.nth(j).click();
+                    radioButton.click();
                     break;
                 }
             }
