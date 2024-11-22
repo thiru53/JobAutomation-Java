@@ -2,11 +2,10 @@ package org.example;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class LinkedInJob {
@@ -14,12 +13,14 @@ public class LinkedInJob {
     static Map<String, String> radioOptionmap = new HashMap<>();
     static Map<String, String> textMap = new HashMap<>();
     static Map<String, String> questionAnswerMap = new HashMap<>();
+    static final String DEFAULT_ANS = "Default Answer";
     static {
         radioOptionmap.put("What payment modes are you","Yes");
         radioOptionmap.put("This role is only for W2/1099","Yes");
         radioOptionmap.put("Have you completed the following level of education: Bachelor's Degree?", "Yes");
         radioOptionmap.put("Are you willing to relocate?", "Yes");
         radioOptionmap.put("Do you have the following license or certification: Professional Engineer (PE)?", "Yes");
+        radioOptionmap.put("Do you have the following license or certification: Engineer In Training?", "Yes");
 
         textMap.put("Why do you want this job?", "I am passionate about this field");
         textMap.put("What is your expected hourly","65");
@@ -108,6 +109,10 @@ public class LinkedInJob {
                 String jobTitle = jobDetailsMainContent.locator("xpath=//div[contains(@class, 'job-details-jobs-unified-top-card__job-title')]//h1").textContent();
                 System.out.println("JobTitle : " + jobTitle);
                 Thread.sleep(1000);
+                List<Locator> appliedStatus = jobDetailsMainContent.locator("xpath=//div[@role='alert']//span[@class='artdeco-inline-feedback__message']").all();
+                if(CollectionUtils.isNotEmpty(appliedStatus)) {
+                    return;
+                }
                 jobDetailsMainContent.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Easy Apply")).click();
 
                 applyToJobItem(page);
@@ -124,64 +129,76 @@ public class LinkedInJob {
         page.getByLabel("Continue to next step").click();
         page.getByLabel("Continue to next step").click();
 
-        Locator questions = page.locator("div.jobs-easy-apply-content .jobs-easy-apply-form-section__grouping");
-        for (int i = 0; i < questions.count(); i++) {
-            fillQuestionAnswers(page, questions, i);
+        boolean isFoudnQns = true;
+        while(isFoudnQns) {
+            List<Locator> questions = page.locator("div.jobs-easy-apply-content .jobs-easy-apply-form-section__grouping").all();
+            for (Locator question : questions) {
+                fillQuestionAnswers(page, question, 1);
+            }
+            /**
+             page.getByLabel("What is your expected hourly").click();
+             page.getByLabel("What is your expected hourly").fill("65");
+             page.getByLabel("Please confirm your work").click();
+             page.locator("#ember1238").click();
+             page.getByLabel("What payment modes are you").selectOption("Yes");
+             page.getByLabel("Review your application").click();
+             page.getByLabel("This role is only for W2/1099").selectOption("Yes");
+             page.getByLabel("Please confirm your work").click();
+             page.getByLabel("Please confirm your work").click();
+             page.getByLabel("Please confirm your work").fill("h1b");
+             page.getByLabel("Are you willing to go HYBRID").selectOption("Yes");
+             page.getByLabel("Please confirm your work").click();
+             page.getByText("Enter a decimal number larger than").click();
+             page.getByLabel("Please confirm your work").click();
+             page.getByLabel("Please confirm your work").fill("");
+             page.getByLabel("Please confirm your work").click();
+             page.getByLabel("Please confirm your work").fill("4");
+             page.getByLabel("Review your application").click();
+             page.getByLabel("Submit application").click();
+             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Dismiss")).click();
+             **/
+            page.getByLabel("Review your application").click();
+
+            Locator submit = page.getByLabel("Submit application");
+            if(Objects.nonNull(submit) && submit.isVisible()) {
+                submit.click();
+                isFoudnQns = false;
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Dismiss")).click();
+            }
         }
-        /**
-        page.getByLabel("What is your expected hourly").click();
-        page.getByLabel("What is your expected hourly").fill("65");
-        page.getByLabel("Please confirm your work").click();
-        page.locator("#ember1238").click();
-        page.getByLabel("What payment modes are you").selectOption("Yes");
-        page.getByLabel("Review your application").click();
-        page.getByLabel("This role is only for W2/1099").selectOption("Yes");
-        page.getByLabel("Please confirm your work").click();
-        page.getByLabel("Please confirm your work").click();
-        page.getByLabel("Please confirm your work").fill("h1b");
-        page.getByLabel("Are you willing to go HYBRID").selectOption("Yes");
-        page.getByLabel("Please confirm your work").click();
-        page.getByText("Enter a decimal number larger than").click();
-        page.getByLabel("Please confirm your work").click();
-        page.getByLabel("Please confirm your work").fill("");
-        page.getByLabel("Please confirm your work").click();
-        page.getByLabel("Please confirm your work").fill("4");
-        page.getByLabel("Review your application").click();
-        page.getByLabel("Submit application").click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Dismiss")).click();
-         **/
     }
 
-    private static void fillQuestionAnswers(Page page, Locator questions, int i){
-        Locator questionElement = questions.nth(i);
+    private static void fillQuestionAnswers(Page page, Locator questionElement, int i){
+
         String questionText = questionElement.innerText();
         System.out.println("Question: " + questionText);
 
-        Locator hiddenTextElement = questionElement.locator("span[aria-hidden='true']");
-        String hiddenText = hiddenTextElement.textContent();
-        System.out.println("hiddenText: " + hiddenText);
+        //Locator hiddenTextElement = questionElement.locator("span[aria-hidden='true']");
+        //String hiddenText = hiddenTextElement.textContent();
+        //System.out.println("hiddenText: " + hiddenText);
 
         // Retrieve the answer from the map
-        String answer = questionAnswerMap.getOrDefault(hiddenText, "Default Answer");
+        String answer = questionAnswerMap.getOrDefault(questionText, DEFAULT_ANS);
 
-        if (answer.equalsIgnoreCase("Yes") || answer.equalsIgnoreCase("No")) {
-            // Handle Yes/No radio button questions
-            List<Locator> radioButtons = questionElement.locator("input[type=radio]").all();
-            for (Locator radioButton : radioButtons) {
-                String optionText = radioButton.locator("..").innerText().trim(); // Adjust based on structure
-                if (optionText.equalsIgnoreCase(answer)) {
-                    radioButton.click();
-                    break;
-                }
+        List<Locator> radioButtons = questionElement.locator("input[type=radio]").all();
+        if(CollectionUtils.isNotEmpty(radioButtons)) {
+            Locator yesLabel = questionElement.locator("label[data-test-text-selectable-option__label='No']");
+            if(answer.equalsIgnoreCase("Yes")) {
+                yesLabel = questionElement.locator("label[data-test-text-selectable-option__label='Yes']");
             }
-        } else {
-            // Handle text-based questions
-            Locator inputField = questionElement.locator("textarea.answer-field");
-            if (inputField.isVisible()) {
-                inputField.fill(answer);
-            } else {
-                System.out.println("No input field found for question: " + questionText);
-            }
+            yesLabel.click();
+        }
+
+        List<Locator> textBox = questionElement.locator("input[type=text]").all();
+        if(CollectionUtils.isNotEmpty(textBox)) {
+            String answerForText = questionAnswerMap.get(questionText);
+            String ans = Objects.isNull(answerForText) && StringUtils.contains(questionText, "How many") ? "6" : answerForText;
+            questionElement.locator("input[type=text]").fill(ans);
+        }
+
+        Locator dropdown = questionElement.locator("select");
+        if(Objects.nonNull(dropdown) && dropdown.isVisible()) {
+            dropdown.selectOption("Yes");
         }
     }
 
