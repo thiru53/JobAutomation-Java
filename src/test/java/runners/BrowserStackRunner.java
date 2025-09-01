@@ -56,13 +56,13 @@ public class BrowserStackRunner {
         String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
         System.out.println("BROWSERSTACK_ACCESS_KEY : " + accessKey);
         try {
-            if (true) {
+            if (isBrowserStack) {
                 logger.info("Running in BrowserStack mode");
                 browserType = playwright.chromium();
 
                 JsonObject jsonCaps = getDefaultCapabilitiesObject();
-                jsonCaps.addProperty("browserstack.user", "tiruparhaiahsall_WIhn8u");
-                jsonCaps.addProperty("browserstack.key", "cd3DjczVmaNn9BpchxXa");
+                jsonCaps.addProperty("browserstack.user", userName);
+                jsonCaps.addProperty("browserstack.key", accessKey);
 
                 // Construct WebSocket endpoint
                 String capsJson = jsonCaps.toString();
