@@ -151,36 +151,54 @@ public class LinkedInJobTest extends BrowserStackRunner {
             //page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(30000));
             page.waitForLoadState(LoadState.DOMCONTENTLOADED, new Page.WaitForLoadStateOptions().setTimeout(30000));
 
+            Locator globalNav = page.locator("div#global-nav-search");
+            Locator inputSearch = globalNav.locator("div#global-nav-typeahead input");
+            inputSearch.fill("spring-boot");
+            inputSearch.press("Enter");
+
+            /**
             Thread.sleep(1000);
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Jobs").setExact(true)).click();
+            //page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Jobs").setExact(true)).click();
 
             Thread.sleep(5000);
-            Locator jobSearchLoc = page.getByRole(AriaRole.COMBOBOX, new Page.GetByRoleOptions().setName("Search by title, skill, or"));
+            Locator jobSearchLoc = page.getByRole(AriaRole.COMBOBOX, new Page.GetByRoleOptions().setName("Search"));
             jobSearchLoc.fill("spring-boot");
             jobSearchLoc.press("Enter");
+             **/
 
             Thread.sleep(5000);
 
             // Applying filters
+            applyJobSearchFilter("Jobs", List.of());
             applyJobSearchFilter("Date posted", List.of("Past 24 hours"));
             applyJobSearchFilter("Experience level", List.of("Associate", "Mid-Senior level"));
             applyJobSearchFilter("Easy Apply", List.of());
 
             Thread.sleep(5000);
 
+            Locator jobSearchPaginationLoc = page.locator("div.jobs-search-pagination");
+            //List<Locator> pagesLoc = jobSearchPaginationLoc.locator("li.jobs-search-pagination__indicator").all();
+
             boolean isNextPageAvailable = true;
             while (isNextPageAvailable) {
-                Locator currentPage = page.locator("button.jobs-search-pagination__indicator-button--active");
+                Locator currentPage = jobSearchPaginationLoc.locator("button.jobs-search-pagination__indicator-button--active");
                 if (currentPage.isVisible()) {
+                    logger.info("Current Page : {}", currentPage.innerText());
                     List<Locator> jobItems = page.locator("xpath=//ul//li[contains(@class, 'scaffold-layout__list-item')]").all();
                     System.out.println("Found " + jobItems.size() + " jobItems in Page " + currentPage.innerText());
                     applyToJobList(jobItems);
                 }
+
+                Locator nextPageButton = jobSearchPaginationLoc.locator("button.jobs-search-pagination__button--next");
+                if(!nextPageButton.isVisible()) {
+                    isNextPageAvailable = false;
+                }
             }
 
 
-        } finally {
-
+        } catch (Exception e) {
+            logger.error("Error : {}", e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
