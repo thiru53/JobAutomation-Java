@@ -117,7 +117,7 @@ public class DiceJobTest extends BrowserStackRunner {
         String btnText = applyBtn.innerText();
         System.out.println("Button Text : " + btnText);
         if (StringUtils.equalsIgnoreCase(btnText, "Easy apply")) {
-            System.out.println("Its " + btnText);
+            System.out.println("Its a " + btnText);
             applyBtn.click();
 
             // Continue other steps to complete process
@@ -131,6 +131,7 @@ public class DiceJobTest extends BrowserStackRunner {
                 nextBtn.click();
             }
         } else {
+            System.out.println("oops, Its not a " + btnText);
             applyBtn.click();
         }
 
