@@ -17,7 +17,7 @@ public class JobRightTest extends BrowserStackRunner {
     @Test
     void jobRightTest() throws InterruptedException {
         logger.info("Starting test: JobRightTest");
-        try{
+        try {
 
             page.navigate("https://jobright.ai");
 
@@ -35,19 +35,15 @@ public class JobRightTest extends BrowserStackRunner {
             Thread.sleep(10000);
             // close dialog if exists
             Locator dialogCloseBtn = page.locator("button.ant-modal-close");
-            if(dialogCloseBtn.isVisible()) {
+            if (dialogCloseBtn.isVisible()) {
                 dialogCloseBtn.click();
             }
 
             List<Locator> jobItems = page.locator("div[class*='index_job-card_']").all();
-            for(Locator jobItem : jobItems) {
+            for (Locator jobItem : jobItems) {
+                jobItem.locator("button").getByText("APPLY NOW").click();
 
-                Thread.sleep(5000);
-
-                Locator applyBtn2 = jobItem.locator("button").getByText("APPLY NOW");
-                if (applyBtn2.isVisible()) {
-                    applyBtn2.click();
-                }
+                List<String> buttonTexts = List.of("Fix My Resume Now", "Improve My Resume for This Job", "Apply Now", "Generate My New Resume");
                 Thread.sleep(5000);
 
                 Locator btn2 = page.locator("button").getByText("Fix My Resume Now");
@@ -55,20 +51,22 @@ public class JobRightTest extends BrowserStackRunner {
                     btn2.click();
                 }
                 Thread.sleep(5000);
-                Locator generateResume = page.locator("button").getByText("Generate My New Resume");
-                if(generateResume.isVisible()) {
-                    generateResume.click();
+                Locator improveMyResume = page.locator("button").getByText("Improve My Resume for This Job");
+                if (improveMyResume.isVisible()) {
+                    improveMyResume.click();
                 }
                 Thread.sleep(5000);
-                Locator l = page.locator("div[class*='index_tailor-resume-loading-linear-progress_']");
-                while (l.isVisible()) {
+                Locator generateResume = page.locator("button").getByText("Generate My New Resume");
+                while (generateResume.isVisible()) {
                     TimeUnit.MINUTES.sleep(1);
                 }
                 Thread.sleep(5000);
                 Locator applyBtn = page.locator("button").getByText("Apply Now");
-                if(applyBtn.isVisible()) {
+                if (applyBtn.isVisible()) {
                     applyBtn.click();
                 }
+
+                //Locator UpgradeBtn = page.locator("button[class*='index_referral-confirm-modal-button_']").getByText("Upgrade to Jobright Turbo");
 
             }
 
@@ -76,8 +74,8 @@ public class JobRightTest extends BrowserStackRunner {
             Thread.sleep(10000);
 
 
-        } finally {
-
+        } catch (Exception e) {
+            logger.error("Error : {}", e.getMessage());
         }
     }
 }
