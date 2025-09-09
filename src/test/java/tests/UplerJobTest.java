@@ -67,8 +67,8 @@ public class UplerJobTest extends BrowserStackRunner {
                 applyToJob(jobItem);
             }
 
-        } finally {
-
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -150,12 +150,9 @@ public class UplerJobTest extends BrowserStackRunner {
                 popup.locator("[data-automation-id='autofillWithResume']").click();
             }
 
-
+            //System.out.println("New tab Title : " + newTabPage.title() + ", Status : applied");
+            logger.info("\t ==> New tab Title : {}, Status : {}", newTabPage.title(), "Applied");
         }
-
-        //System.out.println("New tab Title : " + newTabPage.title() + ", Status : applied");
-        logger.info("\t ==> New tab Title : {}, Status : {}", newTabPage.title(), "Applied");
-
         // Close the page after necessary action done.
         newTabPage.close();
         logger.info("Closed new Tab Page");
