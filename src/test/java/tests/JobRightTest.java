@@ -57,8 +57,9 @@ public class JobRightTest extends BrowserStackRunner {
                 }
                 Thread.sleep(5000);
                 Locator generateResume = page.locator("button").getByText("Generate My New Resume");
-                while (generateResume.isVisible()) {
-                    TimeUnit.MINUTES.sleep(1);
+                if (generateResume.isVisible()) {
+                    generateResume.click();
+                    TimeUnit.SECONDS.sleep(30);
                 }
                 Thread.sleep(5000);
                 Locator applyBtn = page.locator("button").getByText("Apply Now");
@@ -76,6 +77,7 @@ public class JobRightTest extends BrowserStackRunner {
 
         } catch (Exception e) {
             logger.error("Error : {}", e.getMessage());
+            throw e;
         }
     }
 }
