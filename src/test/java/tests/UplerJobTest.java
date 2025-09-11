@@ -152,9 +152,18 @@ public class UplerJobTest extends BrowserStackRunner {
 
             //System.out.println("New tab Title : " + newTabPage.title() + ", Status : applied");
             logger.info("\t ==> New tab Title : {}, Status : {}", newTabPage.title(), "Applied");
+        } else {
+            applyInCompanyPortal(newTabPage);
         }
         // Close the page after necessary action done.
         newTabPage.close();
         logger.info("Closed new Tab Page");
+    }
+
+    private void applyInCompanyPortal(Page newTabPage) {
+
+        List<Locator> btns = newTabPage.locator("a").all();
+        Optional<Locator> matchedBtn = btns.stream().filter(btn -> StringUtils.equalsAnyIgnoreCase(btn.innerText(), "I'm interested")).findFirst();
+        matchedBtn.ifPresent(Locator::click);
     }
 }
