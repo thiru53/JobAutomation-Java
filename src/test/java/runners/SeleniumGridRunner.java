@@ -15,16 +15,9 @@ import java.util.Objects;
 
 public class SeleniumGridRunner {
 
-    public static final String USER_DIR = "user.dir";
     private static final Logger logger = LoggerFactory.getLogger(SeleniumGridRunner.class);
-    public static String userName, accessKey;
-    public static Map<String, Object> browserStackYamlMap;
 
-    static Playwright playwright;
-    static Browser browser;
-    static Local bsLocal;
-    public BrowserContext context;
-    public Page page;
+    public WebDriver driver;
 
     @BeforeEach
     void launchBrowser() throws Exception {
@@ -36,10 +29,8 @@ public class SeleniumGridRunner {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setBrowserName("chrome");
 
-        WebDriver driver = null;
         try {
             driver = new RemoteWebDriver(new java.net.URL(gridUrl), capabilities);
-            logger.info("Selenium RemoteWebDriver isNull : {}", Objects.isNull(driver));
 
             // Navigate to a page
             driver.get("https://www.google.com");
@@ -55,28 +46,8 @@ public class SeleniumGridRunner {
 
     @AfterEach
     void tearDown() throws Exception {
-        logger.info("Tearing down BrowserStack setup");
-        if (Objects.nonNull(page)) {
-            page.close();
-            logger.debug("Closed Playwright page");
-        }
-        if (Objects.nonNull(browser)) {
-            browser.close();
-            logger.debug("Closed Playwright browser");
-        }
-        if (Objects.nonNull(playwright)) {
-            playwright.close();
-            logger.debug("Closed Playwright instance");
-        }
-        if (bsLocal != null && bsLocal.isRunning()) {
-            try {
-                bsLocal.stop();
-                logger.info("Stopped BrowserStack Local tunnel");
-            } catch (Exception e) {
-                logger.error("Failed to stop BrowserStack Local tunnel: {}", e.getMessage());
-                throw e;
-            }
-        }
+        logger.info("Tearing down Selenium setup");
+        driver.close();
         logger.info("Check details at https://automate.browserstack.com/dashboard");
     }
 

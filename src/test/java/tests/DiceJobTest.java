@@ -5,6 +5,8 @@ import com.microsoft.playwright.options.LoadState;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import runners.SeleniumGridRunner;
@@ -15,59 +17,6 @@ import java.util.regex.Pattern;
 public class DiceJobTest extends SeleniumGridRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DiceJobTest.class);
-
-    @Test
-    void bstackSampleLocalTest() throws InterruptedException {
-        logger.info("Starting test: testLocalWebsite");
-        try {
-
-            page.navigate("https://www.dice.com/dashboard/login");
-            page.locator("input[type='email']").fill("tirupathaiah.salla2@gmail.com");
-            page.locator("button[data-testid='sign-in-button']").click();
-
-            page.locator("input[type='password']").fill("Thiru@123");
-            page.locator("button[data-testid='submit-password']").click();
-
-            page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(30000));
-            page.waitForLoadState(LoadState.DOMCONTENTLOADED, new Page.WaitForLoadStateOptions().setTimeout(30000));
-
-            Thread.sleep(10000);
-            Locator jobTitleInputField = page.locator("xpath=//input[contains(@aria-label, 'Job title')]");
-            jobTitleInputField.fill("Spring-boot");
-
-            Thread.sleep(1000);
-            Locator locationField = page.locator("xpath=//input[contains(@aria-label, 'Location Field')]");
-            locationField.fill("United States");
-
-            Thread.sleep(1000);
-            page.locator("button[data-testid='job-search-search-bar-search-button']").click();
-
-            // apply filters
-            applyFilters(page);
-
-            // Check list of job items
-            Thread.sleep(10000);
-            boolean isLast = false;
-            while (!isLast) {
-                List<Locator> jobItems = page.locator("div[data-testid='job-search-results-container'] div[role='listitem']").all();
-                for (Locator jobItem : jobItems) {
-                    applyToJob(jobItem, context);
-                }
-                Locator nextLoc = page.locator("nav[aria-label='Pagination']").locator("span[aria-label='Next']");
-                if (nextLoc.isVisible() && nextLoc.isEnabled()) {
-                    nextLoc.click();
-                } else {
-                    isLast = true;
-                }
-            }
-        } catch (Exception e){
-            System.err.println(e.getMessage());
-        } finally {
-            context.close();
-            page.close();
-
-        }
-    }
 
     private static void applyFilters(Page page) {
         logger.info("Applying following Filters");
@@ -140,6 +89,31 @@ public class DiceJobTest extends SeleniumGridRunner {
         logger.info("Job : {}, Status : {}", newTabPage.title(), "Applied");
         // Close the page after necessary action done.
         newTabPage.close();
+    }
+
+    @Test
+    void diceJobApplyTest() throws InterruptedException {
+        logger.info("Starting test: DiceJobApplyTest");
+        try {
+
+            String url = "https://www.dice.com/dashboard/login";
+            driver.get(url);
+            logger.info("Opened Url: {}", url);
+
+            WebElement emailEle = driver.findElement(By.xpath("//input[type='email']"));
+            emailEle.sendKeys(("tirupathaiah.salla2@gmail.com"));
+            logger.info("Email entered in textbox");
+
+            driver.findElement(By.xpath("//button[data-testid='sign-in-button']")).click();
+            logger.info("Email entered in textbox");
+
+            WebElement passwordEle = driver.findElement(By.xpath("//input[type='password']"));
+            passwordEle.sendKeys(("Thiru@123"));
+            logger.info("Email entered in textbox");
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
