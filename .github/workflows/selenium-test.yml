@@ -46,6 +46,19 @@ jobs:
       - name: Wait for Selenium Grid
         run: |
           timeout 30s bash -c "until curl -s http://localhost:4444/wd/hub/status | grep -q 'ready.*true'; do sleep 1; echo 'Waiting for Selenium Grid...'; done"
+          
+      # Verify Selenium Grid is running
+      - name: Verify Selenium Grid
+        run: |
+          echo "Checking Selenium Grid status..."
+          timeout 60s bash -c "until curl -s http://localhost:4444/wd/hub/status | grep -q '\"ready\": true'; do sleep 1; echo 'Waiting for Selenium Grid...'; done"
+          if [ $? -eq 0 ]; then
+            echo "Selenium Grid is ready!"
+            curl http://localhost:4444/wd/hub/status
+          else
+            echo "Error: Selenium Grid failed to start within 60 seconds"
+            exit 1
+          fi
 
       # Install Playwright dependencies (optional if using Selenium Grid exclusively)
       - name: Install Playwright browsers
