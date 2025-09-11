@@ -28,26 +28,34 @@ public class SeleniumGridRunner {
 
     @BeforeEach
     void launchBrowser() throws Exception {
-
+        logger.info("Launching Browser....");
 
         // Connect to Selenium Grid
         String gridUrl = System.getenv("SELENIUM_GRID_URL");
+        logger.info("GridUrl : {}", gridUrl);
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setBrowserName("chrome");
 
         try {
             WebDriver driver = new RemoteWebDriver(new java.net.URL(gridUrl), capabilities);
+            logger.info("Selenium RemoteWebDriver isNull : {}", Objects.isNull(driver));
 
             // Initialize Playwright
             Playwright playwright = Playwright.create();
+            logger.info("Playwright Object null : {}", Objects.isNull(playwright));
 
             // Connect to Selenium Grid session via CDP (adjust for your setup)
             // browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
             browser = playwright.chromium().connectOverCDP("ws://localhost:4444/session");
-            context = browser.newContext();
-            page = context.newPage();
-        } catch (Exception e) {
+            logger.info("Browser Object null : {}", Objects.isNull(browser));
 
+            context = browser.newContext();
+            logger.info("Context Object null : {}", Objects.isNull(context));
+
+            page = context.newPage();
+            logger.info("Page Object null : {}", Objects.isNull(page));
+        } catch (Exception e) {
+            logger.error("Exception : {}", e.getMessage());
         } finally {
 
         }
