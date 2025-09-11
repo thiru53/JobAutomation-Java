@@ -42,6 +42,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
+      # Wait for Selenium Grid to be ready
+      - name: Wait for Selenium Grid
+        run: |
+          timeout 30s bash -c "until curl -s http://localhost:4444/wd/hub/status | grep -q 'ready.*true'; do sleep 1; echo 'Waiting for Selenium Grid...'; done"
+
       # Install Playwright dependencies (optional if using Selenium Grid exclusively)
       - name: Install Playwright browsers
         run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps"
