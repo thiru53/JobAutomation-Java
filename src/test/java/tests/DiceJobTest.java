@@ -4,15 +4,15 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-import runners.BrowserStackRunner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import runners.SeleniumGridRunner;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class DiceJobTest extends BrowserStackRunner {
+public class DiceJobTest extends SeleniumGridRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DiceJobTest.class);
 
