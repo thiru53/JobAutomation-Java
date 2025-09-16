@@ -17,6 +17,59 @@ public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DiceJobPlayWriteTest.class);
 
+    @Test
+    void diceJobTest() throws InterruptedException {
+        logger.info("Starting test: DiceJobTest");
+        try {
+
+            page.navigate("https://www.dice.com/dashboard/login");
+            page.locator("input[type='email']").fill("tirupathaiah.salla2@gmail.com");
+            page.locator("button[data-testid='sign-in-button']").click();
+
+            page.locator("input[type='password']").fill("Thiru@123");
+            page.locator("button[data-testid='submit-password']").click();
+
+            page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(30000));
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED, new Page.WaitForLoadStateOptions().setTimeout(30000));
+
+            Thread.sleep(10000);
+            Locator jobTitleInputField = page.locator("xpath=//input[contains(@aria-label, 'Job title')]");
+            jobTitleInputField.fill("Spring-boot");
+
+            Thread.sleep(1000);
+            Locator locationField = page.locator("xpath=//input[contains(@aria-label, 'Location Field')]");
+            locationField.fill("United States");
+
+            Thread.sleep(1000);
+            page.locator("button[data-testid='job-search-search-bar-search-button']").click();
+
+            // apply filters
+            applyFilters(page);
+
+            // Check list of job items
+            Thread.sleep(10000);
+            boolean isLast = false;
+            while (!isLast) {
+                List<Locator> jobItems = page.locator("div[data-testid='job-search-results-container'] div[role='listitem']").all();
+                for (Locator jobItem : jobItems) {
+                    applyToJob(jobItem, context);
+                }
+                Locator nextLoc = page.locator("nav[aria-label='Pagination']").locator("span[aria-label='Next']");
+                if (nextLoc.isVisible() && nextLoc.isEnabled()) {
+                    nextLoc.click();
+                } else {
+                    isLast = true;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        } finally {
+            context.close();
+            page.close();
+
+        }
+    }
+
     private static void applyFilters(Page page) {
         logger.info("Applying following Filters");
         page.locator("button[type='button']").filter(new Locator.FilterOptions().setHasText("All filters")).click();
@@ -88,59 +141,6 @@ public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
         logger.info("Job : {}, Status : {}", newTabPage.title(), "Applied");
         // Close the page after necessary action done.
         newTabPage.close();
-    }
-
-    @Test
-    void diceJobTest() throws InterruptedException {
-        logger.info("Starting test: DiceJobTest");
-        try {
-
-            page.navigate("https://www.dice.com/dashboard/login");
-            page.locator("input[type='email']").fill("tirupathaiah.salla2@gmail.com");
-            page.locator("button[data-testid='sign-in-button']").click();
-
-            page.locator("input[type='password']").fill("Thiru@123");
-            page.locator("button[data-testid='submit-password']").click();
-
-            page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(30000));
-            page.waitForLoadState(LoadState.DOMCONTENTLOADED, new Page.WaitForLoadStateOptions().setTimeout(30000));
-
-            Thread.sleep(10000);
-            Locator jobTitleInputField = page.locator("xpath=//input[contains(@aria-label, 'Job title')]");
-            jobTitleInputField.fill("Spring-boot");
-
-            Thread.sleep(1000);
-            Locator locationField = page.locator("xpath=//input[contains(@aria-label, 'Location Field')]");
-            locationField.fill("United States");
-
-            Thread.sleep(1000);
-            page.locator("button[data-testid='job-search-search-bar-search-button']").click();
-
-            // apply filters
-            applyFilters(page);
-
-            // Check list of job items
-            Thread.sleep(10000);
-            boolean isLast = false;
-            while (!isLast) {
-                List<Locator> jobItems = page.locator("div[data-testid='job-search-results-container'] div[role='listitem']").all();
-                for (Locator jobItem : jobItems) {
-                    applyToJob(jobItem, context);
-                }
-                Locator nextLoc = page.locator("nav[aria-label='Pagination']").locator("span[aria-label='Next']");
-                if (nextLoc.isVisible() && nextLoc.isEnabled()) {
-                    nextLoc.click();
-                } else {
-                    isLast = true;
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
-            context.close();
-            page.close();
-
-        }
     }
 
 }
