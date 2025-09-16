@@ -2,7 +2,7 @@ name: Daily Playwright Java Tests
 
 on:
   schedule:
-    - cron: '0 7 * * 1-5' # Runs daily at 7 AM UTC, Monday–Friday
+    - cron: '30 13 * * 1-5'  # Runs at 13:30 UTC (7:30 AM CST), Monday to Friday
   push:
     branches:
       - SeleniumGrid
