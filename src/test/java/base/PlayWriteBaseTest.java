@@ -2,18 +2,17 @@ package base;
 
 import com.microsoft.playwright.*;
 import factory.PlaywrightFactory;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-import java.util.Properties;
-
 
 public class PlayWriteBaseTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(PlayWriteBaseTest.class);
 
     protected static Playwright playwright;
     protected static Browser browser;
@@ -22,10 +21,21 @@ public class PlayWriteBaseTest {
 
     @BeforeAll
     static void setup() {
+        logger.info("---------------------------------------------------------------------------------");
+        logger.info("Setting up browser env...");
+        boolean headless = false;
+        String isGitHubActions = System.getenv("GITHUB_ACTIONS");
+        if (StringUtils.isNoneBlank(isGitHubActions) && BooleanUtils.isTrue(Boolean.valueOf(isGitHubActions))) {
+            headless = true;
+        }
+        logger.info("RUNNING_IN_GITHUB_ACTIONS : {}", isGitHubActions);
+        logger.info("Headless : {}", headless);
+
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
         context = browser.newContext();
         page = context.newPage();
+        logger.info("browser launched successfully!");
     }
 
     @AfterAll
@@ -34,5 +44,6 @@ public class PlayWriteBaseTest {
         context.close();
         browser.close();
         playwright.close();
+        logger.info("Closed browser and playwright successfully!");
     }
 }

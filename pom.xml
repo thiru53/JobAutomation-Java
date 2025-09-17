@@ -96,6 +96,28 @@
             <version>2.16.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>5.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -107,6 +129,25 @@
                 <configuration>
                     <source>9</source>
                     <target>9</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+
+                <configuration>
+                    <forkCount>3</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <argLine>-Xmx2048m -Xss512k</argLine>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testrunners/testng_regressions.xml</suiteXmlFile>
+                        <!-- <suiteXmlFile>${suiteXmlFile}</suiteXmlFile> -->
+
+                    </suiteXmlFiles>
+
+
+
                 </configuration>
             </plugin>
         </plugins>
