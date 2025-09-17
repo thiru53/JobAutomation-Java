@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
@@ -44,7 +46,8 @@ public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
             page.locator("button[data-testid='job-search-search-bar-search-button']").click();
 
             // apply filters
-            applyFilters(page);
+            Map<String,String> filterMap = getFilter1();
+            applyFilters(filterMap);
 
             // Check list of job items
             Thread.sleep(10000);
@@ -70,27 +73,16 @@ public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
         }
     }
 
-    private static void applyFilters(Page page) {
+    private static void applyFilters(Map<String, String> filterMap) {
         logger.info("Applying following Filters");
         page.locator("button[type='button']").filter(new Locator.FilterOptions().setHasText("All filters")).click();
         Locator sectionLoc = page.locator("section[aria-label='Drawer content']");
         Locator labelLoc = page.locator("label");
 
-        // Job post features
-        labelLoc.filter(new Locator.FilterOptions().setHasText(Pattern.compile("Easy apply"))).click();
-        logger.info("\t Job Post : {}", "Easy apply");
-
-        // Posted date
-        labelLoc.filter(new Locator.FilterOptions().setHasText(Pattern.compile("Today"))).click();
-        logger.info("\t Posted Date : {}", "Today");
-
-        // Work settings
-        labelLoc.filter(new Locator.FilterOptions().setHasText(Pattern.compile("Remote"))).click();
-        logger.info("\t Work Type : {}", "Today");
-
-        // Employment type
-        //labelLoc.filter(new Locator.FilterOptions().setHasText(Pattern.compile("Full time"))).click();
-
+        filterMap.forEach((k, v) -> {
+            labelLoc.filter(new Locator.FilterOptions().setHasText(Pattern.compile(v))).click();
+            logger.info("\t {} : {}", k, v);
+        });
         // Apply filters
         page.locator("button[type='button']").filter(new Locator.FilterOptions().setHasText("Apply filters")).click();
     }
@@ -141,6 +133,24 @@ public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
         logger.info("Job : {}, Status : {}", newTabPage.title(), "Applied");
         // Close the page after necessary action done.
         newTabPage.close();
+    }
+
+    private static Map<String, String> getFilter1() {
+        Map<String, String> filterMap = new HashMap<>();
+        filterMap.put("JobPost", "Easy apply");
+        filterMap.put("PostedDate", "Today");
+        filterMap.put("WorkSetting", "Remote");
+        filterMap.put("EmploymentType", "Full time");
+        return filterMap;
+    }
+
+    private static Map<String, String> getFilter2() {
+        Map<String, String> filterMap = new HashMap<>();
+        filterMap.put("JobPost", "Easy apply");
+        filterMap.put("PostedDate", "Today");
+        filterMap.put("WorkSetting", "Remote");
+        filterMap.put("EmploymentType", "Full time");
+        return filterMap;
     }
 
 }
