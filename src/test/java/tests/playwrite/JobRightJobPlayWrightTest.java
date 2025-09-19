@@ -49,6 +49,8 @@ public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
             List<Locator> jobItems = page.locator("div[class*='index_job-card_']").all();
             logger.info("Found {} Job items", jobItems.size());
             for (Locator jobItem : jobItems) {
+                String title = jobItem.locator("h2[class*=' index_job-title_']").innerText();
+                logger.info("JobTitle : {}", title);
                 jobItem.locator("button").getByText("APPLY NOW").click();
 
                 List<String> buttonTexts = List.of("Fix My Resume Now", "Improve My Resume for This Job", "Apply Now", "Generate My New Resume");
