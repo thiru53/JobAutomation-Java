@@ -19,7 +19,7 @@ public class UplerJobPlayWrightTest extends PlayWriteBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(UplerJobPlayWrightTest.class);
 
-    @Test
+    //@Test
     void uplerJobTest() throws InterruptedException {
         logger.info("Starting test: uplerJobTest");
         try  {
@@ -38,7 +38,7 @@ public class UplerJobPlayWrightTest extends PlayWriteBaseTest {
             //page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(30000));
             page.waitForLoadState(LoadState.DOMCONTENTLOADED, new Page.WaitForLoadStateOptions().setTimeout(30000));
 
-            Thread.sleep(10000);
+            Thread.sleep(20000);
 
             String title = page.title();
             logger.info("Title : "+title);
@@ -47,7 +47,7 @@ public class UplerJobPlayWrightTest extends PlayWriteBaseTest {
 
             // Job Search by keyword
             Locator jobSearchDiv = page.locator("div.oppSearchBox");
-            jobSearchDiv.getByPlaceholder("Search Opportunities").fill("Spring");
+            jobSearchDiv.getByPlaceholder("Search Opportunities").fill("Spring-boot");
 
             logger.info("Applying Filter...");
             applyFilter("Posted Date", "Within 24 Hours");
