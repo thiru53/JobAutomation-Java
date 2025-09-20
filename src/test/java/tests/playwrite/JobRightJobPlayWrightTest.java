@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
@@ -15,15 +16,15 @@ public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
     private static final Logger logger = LoggerFactory.getLogger(JobRightJobPlayWrightTest.class);
 
     @Test
-    void jobRightTest() throws InterruptedException {
+    void jobRightTest() {
         logger.info("Starting test: JobRightTest");
         try {
-
             page.navigate("https://jobright.ai");
             logger.info("Opened JobRight Web portal");
 
             // click on sign in button
             page.locator("#firstpage").getByText("SIGN IN").click();
+            logger.info("Clicked on SignIn link");
 
             Locator formLocator = page.locator("form[id='basic']");
             formLocator.locator("input[id='basic_email']").fill("tirupathaiah.salla2@gmail.com");
@@ -33,7 +34,7 @@ public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
             logger.info("Password entered");
 
             formLocator.locator("button").getByText("SIGN IN").click();
-            logger.info("Clicked on SignIn");
+            logger.info("Clicked on SignIn button");
 
             Thread.sleep(4000);
             Locator sideNavBar = page.locator("div.ant-layout-sider-children");
@@ -51,49 +52,43 @@ public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
             for (Locator jobItem : jobItems) {
                 String title = jobItem.locator("h2[class*='index_job-title_']").innerText();
                 logger.info("JobTitle : {}", title);
-                Locator applyBtn1 = jobItem.locator("button[class*='index_apply-button_']");
-                if(applyBtn1.isVisible()) {
-                    applyBtn1.click();
-                    logger.info("Apply Button found and clicked");
-                }
+                Locator indexApplyButton = jobItem.locator("button[class*='index_apply-button_']");
+                clickOnButton(indexApplyButton);
 
-                //jobItem.locator("button").getByText("APPLY NOW").click();
-
-                List<String> buttonTexts = List.of("Fix My Resume Now", "Improve My Resume for This Job", "Apply Now", "Generate My New Resume");
                 Thread.sleep(5000);
+                Locator fixMyResumeNowBtn = page.locator("button").getByText("Fix My Resume Now");
+                clickOnButton(fixMyResumeNowBtn);
 
-                Locator btn2 = page.locator("button").getByText("Fix My Resume Now");
-                if (btn2.isVisible()) {
-                    btn2.click();
-                }
                 Thread.sleep(5000);
                 Locator improveMyResume = page.locator("button").getByText("Improve My Resume for This Job");
-                if (improveMyResume.isVisible()) {
-                    improveMyResume.click();
-                }
+                clickOnButton(improveMyResume);
+
                 Thread.sleep(5000);
                 Locator generateResume = page.locator("button").getByText("Generate My New Resume");
-                if (generateResume.isVisible()) {
-                    generateResume.click();
-                    TimeUnit.SECONDS.sleep(30);
-                }
+                clickOnButton(generateResume);
+
                 Thread.sleep(5000);
-                Locator applyBtn = page.locator("button").getByText("Apply Now");
-                if (applyBtn.isVisible()) {
-                    applyBtn.click();
+                Locator directApplyButton = page.locator("button[class*='index_direct-apply-button_']");
+                clickOnButton(directApplyButton);
+
+                Locator upgradeBtn = page.locator("button[class*='index_referral-confirm-modal-button_']");
+                if (upgradeBtn.isVisible()) {
+                    String text = upgradeBtn.innerText();
+                    logger.warn("Out of Custom Resume Credits");
+                    break;
                 }
-
-                //Locator UpgradeBtn = page.locator("button[class*='index_referral-confirm-modal-button_']").getByText("Upgrade to Jobright Turbo");
-
             }
-
-            System.out.println("Email and Password entered");
-            Thread.sleep(10000);
-
 
         } catch (Exception e) {
             logger.error("Error : {}", e.getMessage());
-            throw e;
+        }
+    }
+
+    private void clickOnButton(Locator btnLocator) {
+        if (Objects.nonNull(btnLocator) && btnLocator.isVisible()) {
+            String text = btnLocator.innerText();
+            btnLocator.click();
+            logger.info("Clicked on {} button", text);
         }
     }
 }
