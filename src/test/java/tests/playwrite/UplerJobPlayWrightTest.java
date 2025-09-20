@@ -19,7 +19,7 @@ public class UplerJobPlayWrightTest extends PlayWriteBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(UplerJobPlayWrightTest.class);
 
-    //@Test
+    @Test
     void uplerJobTest() throws InterruptedException {
         logger.info("Starting test: uplerJobTest");
         try  {
