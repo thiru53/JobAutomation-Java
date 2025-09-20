@@ -88,7 +88,7 @@ public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
         if (Objects.nonNull(btnLocator) && btnLocator.isVisible()) {
             String text = btnLocator.innerText();
             btnLocator.click();
-            logger.info("Clicked on {} button", text);
+            logger.info("Clicked on [{}] button", text);
         }
     }
 }
