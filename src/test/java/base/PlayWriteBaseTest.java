@@ -44,5 +44,6 @@ public class PlayWriteBaseTest {
         context.close();
         browser.close();
         playwright.close();
+        logger.info("Closed browser and playwright successfully!");
     }
 }
