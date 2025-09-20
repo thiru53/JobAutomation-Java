@@ -107,6 +107,11 @@
             <artifactId>extentreports</artifactId>
             <version>5.0.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -123,12 +128,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
+                <version>3.2.5</version>
 
                 <configuration>
                     <forkCount>3</forkCount>
                     <reuseForks>true</reuseForks>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                    <argLine>-Xmx2048m -Xss512k</argLine>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/testrunners/testng_regressions.xml</suiteXmlFile>
                         <!-- <suiteXmlFile>${suiteXmlFile}</suiteXmlFile> -->
