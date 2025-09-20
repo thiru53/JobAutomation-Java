@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class DiceJobPlayWriteTest extends PlayWriteBaseTest {
+public class DiceJobPlayWrightTest extends PlayWriteBaseTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiceJobPlayWriteTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiceJobPlayWrightTest.class);
 
     @Test
     void diceJobTest() throws InterruptedException {
-        logger.info("Starting test: DiceJobTest");
+        logger.info("Starting test: DiceJobTest : Playwright");
         try {
 
             page.navigate("https://www.dice.com/dashboard/login");
