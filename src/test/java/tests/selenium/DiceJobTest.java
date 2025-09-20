@@ -17,9 +17,9 @@ public class DiceJobTest extends SeleniumBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DiceJobTest.class);
 
-    @Test
+    //@Test
     void diceJobApplyTest() throws InterruptedException {
-        logger.info("Starting test: DiceJobApplyTest");
+        logger.info("Starting test: DiceJobApplyTest : Selenium");
         try {
 
             String url = "https://www.dice.com/dashboard/login";

@@ -21,7 +21,7 @@ public class DiceJobPlayWrightTest extends PlayWriteBaseTest {
 
     @Test
     void diceJobTest() throws InterruptedException {
-        logger.info("Starting test: DiceJobTest");
+        logger.info("Starting test: DiceJobTest : Playwright");
         try {
 
             page.navigate("https://www.dice.com/dashboard/login");
