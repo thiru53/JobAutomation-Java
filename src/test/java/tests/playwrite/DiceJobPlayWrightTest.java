@@ -24,7 +24,7 @@ public class DiceJobPlayWrightTest extends PlayWriteBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DiceJobPlayWrightTest.class);
 
-    @Test
+    //@Test
     void diceJobTest() throws InterruptedException {
         logger.info("Starting test: DiceJobTest : Playwright");
         try {

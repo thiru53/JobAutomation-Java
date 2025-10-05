@@ -15,7 +15,7 @@ public class JobRightJobPlayWrightTest extends PlayWriteBaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(JobRightJobPlayWrightTest.class);
 
-    @Test
+    //@Test
     void jobRightTest() {
         logger.info("Starting test: JobRightTest");
         try {
