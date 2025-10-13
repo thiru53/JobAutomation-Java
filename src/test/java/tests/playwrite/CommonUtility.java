@@ -86,6 +86,7 @@ public class CommonUtility {
         textMap.put("State or Province", "Texas");
         textMap.put("Zip/Postal Code", "78613");
         textMap.put("What's your expected salary", "140000");
+        textMap.put("What is your primary motivation for exploring new opportunities", "learning and apply new idea");
 
         selectMap.put("Email", "thirupathaiah.salla@gmail.com");
         selectMap.put("Email address", "thirupathaiah.salla@gmail.com");

@@ -36,14 +36,21 @@ public class LinkedInJobPlayWrightTest extends PlayWriteBaseTest {
             //page.locator("input[placeholder='City, state, or zip code']");
 
             // filter JobSearch Criteria
-            Map<String, List<String>> jobSearchKeys = getFilter1();
-            applyJobSearchFilter(jobSearchKeys);
+            Map<String, List<String>> filter1 = getFilter1();
+            List<Map<String, List<String>>> filterList = List.of(filter1);
+            filterList.forEach(filter -> {
+                try {
+                    applyJobSearchFilter(filter);
+                    Thread.sleep(5000);
+                    // 5. Verify Job Listings;
+                    //page.waitForSelector(".job-card-container", new Page.WaitForSelectorOptions().setTimeout(10000));
+                    List<Locator> jobCards = page.locator("li.scaffold-layout__list-item").all();
+                    applyToJobs(jobCards);
 
-            Thread.sleep(5000);
-            // 5. Verify Job Listings;
-            //page.waitForSelector(".job-card-container", new Page.WaitForSelectorOptions().setTimeout(10000));
-            List<Locator> jobCards = page.locator("li.scaffold-layout__list-item").all();
-            applyToJobs(jobCards);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
             logger.info("End of the TesCase");
         } catch (Exception e) {
