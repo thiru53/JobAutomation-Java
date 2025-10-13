@@ -98,6 +98,7 @@ public class CommonUtility {
         selectMap.put("Country", "UNITED STATES");
         selectMap.put("Location (city)", "Austin, Texas, United States");
         selectMap.put("Location", "Austin, Texas, United States");
+        selectMap.put("What is your current notice period", "Immediately");
 
 
         questionAnswerMap.putAll(textMap);
