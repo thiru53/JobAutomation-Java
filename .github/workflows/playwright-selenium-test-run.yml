@@ -41,9 +41,6 @@ jobs:
 
       # Run Maven tests
       - name: Run Playwright tests
-        env:
-          SELENIUM_GRID_URL: http://localhost:4444/wd/hub
-          SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
         run: mvn clean test
 
       # Upload test results (optional, for debugging)
