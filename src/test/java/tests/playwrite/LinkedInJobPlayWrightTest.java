@@ -19,25 +19,11 @@ public class LinkedInJobPlayWrightTest extends PlayWriteBaseTest {
     private static final Logger logger = LoggerFactory.getLogger(LinkedInJobPlayWrightTest.class);
 
     @Test
-    void linkedJobTest() throws InterruptedException {
+    void linkedEasyJobTest() throws InterruptedException {
         logger.info("Starting test: linkedJobTest");
         try {
 
-            // 1. Login to LinkedIn
-            page.navigate("https://www.linkedin.com/login");
-            page.fill("#username", "thirupathaiah.salla@gmail.com");
-            logger.info("Email entered");
-
-            page.fill("#password", "Thiru@linkedin1");
-            logger.info("Password entered");
-
-            page.click("button[type='submit']");
-            logger.info("Clicked On submit button");
-
-            // 2. Verify Login
-            ElementHandle globalNav = page.waitForSelector("nav.global-nav__nav");
-            Assert.assertTrue(globalNav.isVisible(), "LoggedIn Failed");
-            logger.info("Successfully LoggedIn");
+            formLogin();
 
             // Navigate to Global Navigation item
             clickOnGlobalNavItemByName("Jobs");
@@ -63,6 +49,25 @@ public class LinkedInJobPlayWrightTest extends PlayWriteBaseTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void formLogin() {
+
+        // 1. Login to LinkedIn
+        page.navigate("https://www.linkedin.com/login");
+        page.fill("#username", "thirupathaiah.salla@gmail.com");
+        logger.info("Email entered");
+
+        page.fill("#password", "Thiru@linkedin1");
+        logger.info("Password entered");
+
+        page.click("button[type='submit']");
+        logger.info("Clicked On submit button");
+
+        // 2. Verify Login
+        ElementHandle globalNav = page.waitForSelector("nav.global-nav__nav");
+        Assert.assertTrue(globalNav.isVisible(), "LoggedIn Failed");
+        logger.info("Successfully LoggedIn");
     }
 
     private void enterJobSearchText(String keyword) {
@@ -178,7 +183,7 @@ public class LinkedInJobPlayWrightTest extends PlayWriteBaseTest {
                 Locator reviewBtn = footer.locator("button").getByText("Review");
                 Locator submitButton = footer.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("Submit.*", Pattern.CASE_INSENSITIVE)));
 
-                if(nextBtn.isVisible()) {
+                 if(nextBtn.isVisible()) {
                     nextBtn.click();
                 } else if(reviewBtn.isVisible()) {
                     reviewBtn.click();
@@ -247,10 +252,10 @@ public class LinkedInJobPlayWrightTest extends PlayWriteBaseTest {
                     return;
                 }
 
-                Locator radioInput = questionEle.locator("input[type='radio']");
-                if (radioInput.isVisible()) {
+                List<Locator> radioInputs = questionEle.locator("input[type='radio']").all();
+                if (CollectionUtils.isNotEmpty(radioInputs)) {
                     newAnswer = List.of("Yes", "No").contains(newAnswer) ? newAnswer : "No";
-                    radioInput.locator("label[data-test-text-selectable-option__label=" + newAnswer + "]").click();
+                    questionEle.locator("label[data-test-text-selectable-option__label=" + newAnswer + "]").click();
                     type = "radio";
                     return;
                 }
